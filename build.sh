@@ -38,6 +38,8 @@ cdir() {
 ##------------------------------------------------------##
 ##----------Basic Informations, COMPULSORY--------------##
 
+git clone  --recursive https://github.com/aslenofarid/kernel_asus_sdm660 -b perf-ksu kernel && cd kernel
+
 # The defult directory where the kernel should be placed
 KERNEL_DIR=$PWD
 
