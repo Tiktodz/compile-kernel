@@ -28,7 +28,7 @@ MainClangPath="${MainPath}/clang"
 ClangPath="${MainClangPath}"
 
 # Identity
-VERSION=9x13
+VERSION=14
 KERNELNAME=TheOneMemory
 CODENAME=Hayzel
 VARIANT=HMP
@@ -37,7 +37,7 @@ VARIANT=HMP
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Kneba/Ruega-Kernel-X00T -b hayzel kernel
+git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b 14 kernel
 
 # Clone StRess Clang
 ClangPath=${MainClangPath}
@@ -128,7 +128,7 @@ function push() {
         <b>🆑 Changelog: </b>
         - <code>$COMMIT_HEAD</code>
         <b></b>
-        #TheOneMemory #$CODENAME #$VARIANT"
+        #$KERNELNAME #$CODENAME #$VARIANT"
 }
 # Find Error
 function finerr() {
