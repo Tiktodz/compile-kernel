@@ -51,9 +51,6 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 export PATH="${ClangPath}"/bin:${PATH}
-
-SID="CAACAgUAAxkBAAIlv2DEzB-BSFWNyXkkz1NNNOp_pm2nAAIaAgACXGo4VcNVF3RY1YS8HwQ"
-STICK="CAACAgUAAxkBAAIlwGDEzB_igWdjj3WLj1IPro2ONbYUAAIrAgACHcUZVo23oC09VtdaHwQ"
  
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
@@ -65,6 +62,12 @@ tg_post_msg() {
   -d "disable_web_page_preview=true" \
   -d "parse_mode=html" \
   -d text="$1"
+}
+
+tg_send_sticker() {
+    curl -s -X POST "$STICKER" \
+        -d sticker="$1" \
+        -d chat_id="$TG_CHAT_ID"
 }
 
 # Compile
@@ -99,15 +102,14 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
   git clone https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel
   cp -af "$IMAGE" AnyKernel/Image.gz-dtb
 }
-tg_send_sticker() {
-    curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendSticker" \
-        -d sticker="$1" \
-        -d chat_id="$TG_CHAT_ID"
-}
+
 # Push kernel to channel
 function push() {
     cd AnyKernel
     ZIP=$(echo *.zip)
+    MD5CHECK=$(md5sum "$KernelFiles" | cut -d' ' -f1)
+    SID="CAACAgUAAxkBAAIlv2DEzB-BSFWNyXkkz1NNNOp_pm2nAAIaAgACXGo4VcNVF3RY1YS8HwQ"
+    STICK="CAACAgUAAxkBAAIlwGDEzB_igWdjj3WLj1IPro2ONbYUAAIrAgACHcUZVo23oC09VtdaHwQ"
     curl -F document=@"$ZIP" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
@@ -116,6 +118,7 @@ function push() {
 
            tg_send_sticker "$SID"
 }
+
 # Fin Error
 function finerr() {
     curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
@@ -123,6 +126,7 @@ function finerr() {
         -d "disable_web_page_preview=true" \
         -d "parse_mode=markdown" \
         -d text="I'm tired of compiling kernels,And I choose to give up...please give me motivation"
+    tg_send_sticker "CAACAgUAAxkBAAIl1WDE8FQjVXrayorUvfFq4A7Uv9FwAAKaAgAChYYpVutaTPLAAra3HwQ"
     exit 1
 }
 
