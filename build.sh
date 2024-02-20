@@ -15,6 +15,7 @@ MainPath=$(pwd)
 
 # Clone Kernulnya Boys
 git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
+
 # Clone TeeRBeh Clang
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
 
@@ -118,7 +119,7 @@ function zipping() {
     cd ..
 }
 
-tg_post_msg "</b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${DEVICE_CODENAME}"
+tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${DEVICE_CODENAME}"
 compile
 zipping
 END=$(date +"%s")
