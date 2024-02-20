@@ -34,6 +34,9 @@ ClangPath="${MainPath}/clang"
 # wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc32.tar.gz"
 # tar -xf gcc32.tar.gz -C $GCCbPath
 
+# The name of the device for which the kernel is built
+MODEL="Asus Zenfone Max Pro M1"
+
 # Prepare
 KERNEL_ROOTDIR="${MainPath}"/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export TZ=Asia/Jakarta # Change with your local timezone.
@@ -49,9 +52,13 @@ START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 export PATH="${ClangPath}"/bin:${PATH}
 
+SID="CAACAgUAAxkBAAIlv2DEzB-BSFWNyXkkz1NNNOp_pm2nAAIaAgACXGo4VcNVF3RY1YS8HwQ"
+STICK="CAACAgUAAxkBAAIlwGDEzB_igWdjj3WLj1IPro2ONbYUAAIrAgACHcUZVo23oC09VtdaHwQ"
+ 
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
+export STICKER="https://api.telegram.org/bot$TG_TOKEN/sendSticker"
 
 tg_post_msg() {
   curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
@@ -92,6 +99,11 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
   git clone https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel
   cp -af "$IMAGE" AnyKernel/Image.gz-dtb
 }
+tg_send_sticker() {
+    curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendSticker" \
+        -d sticker="$1" \
+        -d chat_id="$TG_CHAT_ID"
+}
 # Push kernel to channel
 function push() {
     cd AnyKernel
@@ -100,7 +112,9 @@ function push() {
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=Markdown" \
-        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${DEVICE_CODENAME}* | *${KBUILD_COMPILER_STRING}*"
+        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | *${KBUILD_COMPILER_STRING}*"
+
+           tg_send_sticker "$SID"
 }
 # Fin Error
 function finerr() {
@@ -119,7 +133,7 @@ function zipping() {
     cd ..
 }
 
-tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${DEVICE_CODENAME}"
+tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
 compile
 zipping
 END=$(date +"%s")
