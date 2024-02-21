@@ -73,8 +73,6 @@ tg_send_sticker() {
     curl -s -X POST "$STICKER" \
         -d sticker="$1" \
         -d chat_id="$TG_CHAT_ID"
-
-    tg_send_sticker "$SID"
 }
 
 # Check Kernel Version
@@ -182,6 +180,7 @@ function zipping() {
         cd ..
 }
 
+tg_send_sticker "$SID"
 tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
 compile
 zipping
