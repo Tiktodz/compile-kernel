@@ -14,7 +14,7 @@ MainPath=$(pwd)
 # MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Clone Kernulnya Boys
-git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
+git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 kernel
 
 # Clone TeeRBeh Clang
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
@@ -99,7 +99,7 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 	exit 1
    fi
   cd ${KERNEL_ROOTDIR}
-  git clone https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel
+  git clone https://github.com/Tiktodz/AnyKernel3 -b main AnyKernel
   cp -af "$IMAGE" AnyKernel/Image.gz-dtb
 }
 
@@ -107,9 +107,9 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 function push() {
     cd AnyKernel
     ZIP=$(echo *.zip)
-    MD5CHECK=$(md5sum "$KernelFiles" | cut -d' ' -f1)
+    MD5CHECK=$(md5sum "$ZIP" | cut -d' ' -f1)
     SID="CAACAgUAAxkBAAIlv2DEzB-BSFWNyXkkz1NNNOp_pm2nAAIaAgACXGo4VcNVF3RY1YS8HwQ"
-    STICK="CAACAgUAAxkBAAIlwGDEzB_igWdjj3WLj1IPro2ONbYUAAIrAgACHcUZVo23oC09VtdaHwQ"
+    STICK="CAACAgUAAxkBAAERkTtl1RQCf9jzTxxJ4DzpVwrPuOOG9QACXAADZ7RFFr72cNXFq8_jNAQ"
     curl -F document=@"$ZIP" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
@@ -126,7 +126,7 @@ function finerr() {
         -d "disable_web_page_preview=true" \
         -d "parse_mode=markdown" \
         -d text="I'm tired of compiling kernels,And I choose to give up...please give me motivation"
-    tg_send_sticker "CAACAgUAAxkBAAIl1WDE8FQjVXrayorUvfFq4A7Uv9FwAAKaAgAChYYpVutaTPLAAra3HwQ"
+    tg_send_sticker "CAACAgUAAxkBAAERkTtl1RQCf9jzTxxJ4DzpVwrPuOOG9QACXAADZ7RFFr72cNXFq8_jNAQ"
     exit 1
 }
 
