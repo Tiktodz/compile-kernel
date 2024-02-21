@@ -95,7 +95,6 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     AR=${ClangPath}/bin/llvm-ar \
     STRIP=${ClangPath}/bin/llvm-strip \
     HOST_PREFIX=${ClangPath}/bin/llvm-objcopy \
-    OBJCOPY=${ClangPath}/bin/llvm-objcopy \
     OBJDUMP=${ClangPath}/bin/llvm-objdump \
     OBJSIZE=${ClangPath}/bin/llvm-size \
     READELF=${ClangPath}/bin/llvm-readelf \
