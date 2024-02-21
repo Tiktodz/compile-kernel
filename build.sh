@@ -77,7 +77,7 @@ export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
 
-make -j$(nproc --all) O=out ARCH=arm64 asus/X00TD_defconfig
+make -j$(nproc --all) O=out ARCH=arm64 X00TD_defconfig
 make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     CC=${ClangPath}/bin/clang \
     NM=${ClangPath}/bin/llvm-nm \
@@ -108,7 +108,7 @@ function push() {
     cd AnyKernel
     ZIP=$(echo *.zip)
     MD5CHECK=$(md5sum "$ZIP" | cut -d' ' -f1)
-    SID="CAACAgUAAxkBAAIlv2DEzB-BSFWNyXkkz1NNNOp_pm2nAAIaAgACXGo4VcNVF3RY1YS8HwQ"
+    SID="CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
     STICK="CAACAgUAAxkBAAERkTtl1RQCf9jzTxxJ4DzpVwrPuOOG9QACXAADZ7RFFr72cNXFq8_jNAQ"
     curl -F document=@"$ZIP" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
@@ -133,7 +133,7 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 "[KSU]$KERNELNAME-X00TD-4-19-$DATE.zip" *
+    zip -r9 "[KSU]$KERNELNAME-X00TD-4-4-$DATE.zip" *
     cd ..
 }
 
