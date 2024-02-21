@@ -50,8 +50,8 @@ export LD="ld.lld"
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE="${KERNEL_ROOTDIR}"/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
-#LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
-export KBUILD_COMPILER_STRING="$CLANG_VER"
+LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
+export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
@@ -115,7 +115,7 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 
 # Push kernel to channel
 function push() {
-    cd AnyKernel
+    cd ${KERNEL_ROOTDIR}/AnyKernel
     MD5CHECK=$(md5sum "$ZIP_FINAL" | cut -d' ' -f1)
     curl -F document=@"$ZIP_FINAL" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
@@ -131,7 +131,6 @@ function finerr() {
         -d "disable_web_page_preview=true" \
         -d "parse_mode=markdown" \
         -d text="I'm tired of compiling kernels,And I choose to give up...please give me motivation"
-    tg_send_sticker "$STICK"
     exit 1
 }
 
@@ -170,7 +169,6 @@ function zipping() {
 
         ZIP_FINAL="$KERNELNAME-$CODENAME-$VARIANT-$DATE"
 
-        msg "|| Signing Zip ||"
         tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
 
         curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
@@ -179,8 +177,9 @@ function zipping() {
         cd ..
 }
 
-tg_send_sticker "$SID"
-tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
+
+tg_post_msg "$STICK
+<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
 compile
 zipping
 END=$(date +"%s")
