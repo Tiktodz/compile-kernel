@@ -14,7 +14,7 @@ MainPath=$(pwd)
 # MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Clone Kernulnya Boys
-git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 kernel
+git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b wip kernel
 
 # Clone TeeRBeh Clang
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
@@ -116,7 +116,7 @@ function push() {
         -F "parse_mode=Markdown" \
         -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | *${KBUILD_COMPILER_STRING}*"
 
-           tg_send_sticker "$SID"
+           tg_send_sticker "CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
 }
 
 # Fin Error
