@@ -88,10 +88,8 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     OBJDUMP=${ClangPath}/bin/llvm-objdump \
     OBJSIZE=${ClangPath}/bin/llvm-size \
     READELF=${ClangPath}/bin/llvm-readelf \
-    CLANG_TRIPLE=aarch64-linux-gnu- \
-    CROSS_COMPILE=${ClangPath}/bin/clang \
-    CROSS_COMPILE_COMPAT=${ClangPath}/bin/clang \
-    CROSS_COMPILE_ARM32=${ClangPath}/bin/clang \
+    CROSS_COMPILE=aarch64-linux-gnu- \
+    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
     HOSTAR=${ClangPath}/bin/llvm-ar \
     HOSTCC=${ClangPath}/bin/clang \
     HOSTCXX=${ClangPath}/bin/clang++
