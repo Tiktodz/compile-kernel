@@ -14,7 +14,7 @@ MainPath=$(pwd)
 # MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Clone Kernulnya Boys
-git clone --depth 1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b wip kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
 
 # Clone TeeRBeh Clang
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
@@ -77,7 +77,7 @@ export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
 
-make -j$(nproc --all) O=out ARCH=arm64 X00TD_defconfig
+make -j$(nproc --all) O=out ARCH=arm64 asus/X00TD_defconfig
 make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     CC=${ClangPath}/bin/clang \
     NM=${ClangPath}/bin/llvm-nm \
@@ -88,8 +88,10 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     OBJDUMP=${ClangPath}/bin/llvm-objdump \
     OBJSIZE=${ClangPath}/bin/llvm-size \
     READELF=${ClangPath}/bin/llvm-readelf \
-    CROSS_COMPILE=aarch64-linux-gnu- \
-    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+    CLANG_TRIPLE=aarch64-linux-gnu- \
+    CROSS_COMPILE=${ClangPath}/bin/clang \
+    CROSS_COMPILE_COMPAT=${ClangPath}/bin/clang \
+    CROSS_COMPILE_ARM32=${ClangPath}/bin/clang \
     HOSTAR=${ClangPath}/bin/llvm-ar \
     HOSTCC=${ClangPath}/bin/clang \
     HOSTCXX=${ClangPath}/bin/clang++
@@ -99,7 +101,7 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 	exit 1
    fi
   cd ${KERNEL_ROOTDIR}
-  git clone https://github.com/Tiktodz/AnyKernel3 -b main AnyKernel
+  git clone https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel
   cp -af "$IMAGE" AnyKernel/Image.gz-dtb
 }
 
@@ -133,7 +135,7 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 "[KSU]$KERNELNAME-X00TD-4-4-$DATE.zip" *
+    zip -r9 "$KERNELNAME-Kernel-4-19-$DATE.zip" *
     cd ..
 }
 
