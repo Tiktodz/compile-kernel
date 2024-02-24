@@ -53,7 +53,8 @@ mkdir $ClangPath
 rm -rf $ClangPath/*
 
 msg "|| Cloning snapdragon clang ||"
-git clone --depth=1 https://github.com/RyuujiX/SDClang -b 14 $ClangPath
+git clone --depth=1 https://gitlab.com/VoidUI/snapdragon-clang.git $ClangPath
+#git clone --depth=1 https://github.com/RyuujiX/SDClang -b 14 $ClangPath
 
 # Clone GCC
 mkdir $GCCaPath
@@ -68,7 +69,7 @@ git clone --depth=1 https://github.com/Kneba/arm-linux-androideabi-4.9 $GCCbPath
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
-CLANG_VER="Snapdragon clang version 14.1.5"
+CLANG_VER="Snapdragon clang version 16.1.0"
 #LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
 export KBUILD_COMPILER_STRING="$CLANG_VER X GCC 4.9.x"
 ClangMoreStrings="AR=llvm-ar NM=llvm-nm AS=llvm-as STRIP=llvm-strip OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf HOSTAR=llvm-ar HOSTAS=llvm-as LD_LIBRARY_PATH=$ClangPath/lib LD=ld.lld HOSTLD=ld.lld"
@@ -98,8 +99,6 @@ cd ${KERNEL_ROOTDIR}
 msg "|| Compile kernel||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
-export LLVM=1
-export LLVM_IAS=1
 
 make -j$(nproc --all) O=out ARCH=arm64 $DEFCONFIG
 make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
