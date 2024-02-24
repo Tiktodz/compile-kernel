@@ -49,16 +49,10 @@ git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/andr
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
-mkdir $ClangPath
-rm -rf $ClangPath/*
 
 msg "|| Cloning snapdragon clang ||"
 git clone --depth=1 https://gitlab.com/VoidUI/snapdragon-clang.git $ClangPath
 #git clone --depth=1 https://github.com/RyuujiX/SDClang -b 14 $ClangPath
-
-# Clone GCC
-mkdir $GCCaPath
-mkdir $GCCbPath
 
 msg "|| Cloning GCC aarch64 ||"
 git clone --depth=1 https://github.com/Kneba/aarch64-linux-android-4.9 $GCCaPath
@@ -100,10 +94,8 @@ msg "|| Compile kernel||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 
-make -j$(nproc --all) O=out ARCH=arm64 $DEFCONFIG
-make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
-        ARCH=$ARCH \
-        SUBARCH=$ARCH \
+make -j$(nproc) O=out ARCH=arm64 $DEFCONFIG
+make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
         PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
         CC=clang \
         CROSS_COMPILE=aarch64-linux-android- \
