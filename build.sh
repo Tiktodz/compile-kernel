@@ -101,8 +101,8 @@ export COMMIT_HEAD=$(git log --oneline -1)
 export LLVM=1
 export LLVM_IAS=1
 
-make -j$(nproc) O=out $DEFCONFIG
-make -j$(nproc) O=out \
+make -j$(nproc --all) O=out ARCH=arm64 $DEFCONFIG
+make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
         PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
