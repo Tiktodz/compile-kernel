@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2023 Kneba <abenkenary3@gmail.com>
+# Copyright (C) 2023-2024 Kneba <abenkenary3@gmail.com>
 #
 
 #
@@ -43,7 +43,7 @@ VERSION=CLO
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-msg "|| Kernel Source ||"
+msg "|| Cloning Kernel Source ||"
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 kernel
 
 # Clone Snapdragon Clang
@@ -59,8 +59,9 @@ git clone --depth=1 https://gitlab.com/VoidUI/snapdragon-clang.git $ClangPath
 mkdir $GCCaPath
 mkdir $GCCbPath
 
-msg "|| Cloning GCC ||"
+msg "|| Cloning GCC aarch64 ||"
 git clone --depth=1 https://github.com/Kneba/aarch64-linux-android-4.9 $GCCaPath
+msg "|| Cloning GCC arm ||"
 git clone --depth=1 https://github.com/Kneba/arm-linux-androideabi-4.9 $GCCbPath
 
 # Prepared
@@ -88,6 +89,9 @@ tg_post_msg() {
     -d "parse_mode=html" \
     -d text="$1"
 }
+
+####------------------------------o-O-o------------------------------####
+
 # Compiler
 compile(){
 cd ${KERNEL_ROOTDIR}
@@ -98,7 +102,7 @@ export LLVM=1
 export LLVM_IAS=1
 
 make -j$(nproc) O=out $DEFCONFIG
-make -j$(nproc) clean O=out \
+make -j$(nproc) O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
         PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
@@ -118,6 +122,9 @@ make -j$(nproc) clean O=out \
    git clone https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
    cp $IMAGE AnyKernel
 }
+
+####------------------------------o-O-o------------------------------####
+
 # Push kernel to telegram
 function push() {
     cd AnyKernel
@@ -142,6 +149,9 @@ function push() {
         <b></b>
         #$KERNELNAME #$CODENAME #$VARIANT"
 }
+
+####------------------------------o-O-o------------------------------####
+
 # Find Error
 function finerr() {
     curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
@@ -151,6 +161,9 @@ function finerr() {
         -d text="❌ Tetap menyerah...Pasti bisa!!!"
     exit 1
 }
+
+####------------------------------o-O-o------------------------------####
+
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
@@ -199,3 +212,5 @@ zipping
 END=$(date +"%s")
 DIFF=$(($END - $START))
 push
+
+####------------------------------o-O-o------------------------------####
