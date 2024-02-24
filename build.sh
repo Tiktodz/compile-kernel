@@ -9,7 +9,7 @@
 
 msg() {
 	echo
-    echo -e "\e[1;32m$*\e[0m"
+    echo -e "\e[1;35m$*\e[0m"
     echo
 }
 
@@ -32,7 +32,9 @@ GCCaPath="${MainGCCaPath}"
 GCCbPath="${MainGCCbPath}"
 
 # Identity
+ARCH=arm64
 CODENAME=Hayzel
+DEFCONFIG=X00TD_defconfig
 KERNELNAME=TheOneMemory
 VARIANT=HMP
 VERSION=CLO
@@ -41,6 +43,7 @@ VERSION=CLO
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
+msg "|| Kernel Source ||"
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 kernel
 
 # Clone Snapdragon Clang
@@ -94,8 +97,8 @@ export COMMIT_HEAD=$(git log --oneline -1)
 export LLVM=1
 export LLVM_IAS=1
 
-make -j$(nproc) O=out ARCH=arm64 X00TD_defconfig
-make -j$(nproc) O=out \
+make -j$(nproc) O=out $DEFCONFIG
+make -j$(nproc) clean O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
         PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
