@@ -51,8 +51,8 @@ ClangPath=${MainClangPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
 
 msg "|| Cloning snapdragon clang ||"
-git clone --depth=1 https://gitlab.com/VoidUI/snapdragon-clang.git $ClangPath
-#git clone --depth=1 https://github.com/RyuujiX/SDClang -b 14 $ClangPath
+#git clone --depth=1 https://gitlab.com/VoidUI/snapdragon-clang.git $ClangPath
+git clone --depth=1 https://github.com/RyuujiX/SDClang -b 14 $ClangPath
 
 msg "|| Cloning GCC aarch64 ||"
 git clone --depth=1 https://github.com/Kneba/aarch64-linux-android-4.9 $GCCaPath
@@ -63,7 +63,7 @@ git clone --depth=1 https://github.com/Kneba/arm-linux-androideabi-4.9 $GCCbPath
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
-CLANG_VER="Snapdragon clang version 16.1.0"
+CLANG_VER="Snapdragon clang version 14.1.5"
 #LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
 export KBUILD_COMPILER_STRING="$CLANG_VER X GCC 4.9.x"
 ClangMoreStrings="AR=llvm-ar NM=llvm-nm AS=llvm-as STRIP=llvm-strip OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf HOSTAR=llvm-ar HOSTAS=llvm-as LD_LIBRARY_PATH=$ClangPath/lib LD=ld.lld HOSTLD=ld.lld"
