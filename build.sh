@@ -78,13 +78,13 @@ export COMMIT_HEAD=$(git log --oneline -1)
 export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
 
 make -j$(nproc --all) O=out ARCH=arm64 asus/X00TD_defconfig
-make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out LLLVM=1 LLVM_IAS=1 \
+make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     CC=${ClangPath}/bin/clang \
     NM=${ClangPath}/bin/llvm-nm \
     CXX=${ClangPath}/bin/clang++ \
     AR=${ClangPath}/bin/llvm-ar \
     STRIP=${ClangPath}/bin/llvm-strip \
-    OBJCOPY=${ClangPath}/bin/llvm-objcopy \
+    HOST_PREFIX=${ClangPath}/bin/llvm-objcopy \
     OBJDUMP=${ClangPath}/bin/llvm-objdump \
     OBJSIZE=${ClangPath}/bin/llvm-size \
     READELF=${ClangPath}/bin/llvm-readelf \
