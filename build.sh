@@ -45,6 +45,7 @@ tg_post_build()
 
 ## Copy this script inside the kernel directory
 KERNEL=$KERNELDIR/kernel
+TCDIR=$KERNELDIR/trb_clang
 KERNEL_DEFCONFIG=asus/X00TD_defconfig
 ANYKERNEL3_DIR=$KERNELDIR/AnyKernel3
 TZ=Asia/Jakarta
@@ -55,8 +56,10 @@ export PATH="$KERNELDIR/trb_clang/bin:$PATH"
 export ARCH=arm64
 export SUBARCH=arm64
 export KBUILD_BUILD_USER="queen"
-export KBUILD_BUILD_HOST=$(source /etc/os-release && echo "${NAME}")
+export KBUILD_BUILD_HOST=$(source /etc/os-release)
 export KBUILD_COMPILER_STRING="$($KERNELDIR/trb_clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+export LLVM=1
+export LLVM_IAS=1
 
 # Speed up build process
 MAKE="./makeparallel"
@@ -80,21 +83,21 @@ echo -e "$blue***********************************************"
 echo -e "          BUILDING KERNEL          "
 echo -e "$red***********************************************"
 make $KERNEL_DEFCONFIG O=out
-make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1 \
+make -j$(nproc --all) O=out \
 	ARCH=arm64 \
 	SUBARCH=arm64 \
-	AS="$KERNELDIR/trb_clang/bin/llvm-as" \
-	CC="$KERNELDIR/trb_clang/bin/clang" \
-	LD="$KERNELDIR/trb_clang/bin/ld.lld" \
-	AR="$KERNELDIR/trb_clang/bin/llvm-ar" \
-	NM="$KERNELDIR/trb_clang/bin/llvm-nm" \
-	STRIP="$KERNELDIR/trb_clang/bin/llvm-strip" \
-	OBJCOPY="$KERNELDIR/trb_clang/bin/llvm-objcopy" \
-	OBJDUMP="$KERNELDIR/trb_clang/bin/llvm-objdump" \
+	AS="$TCDIR/trb_clang/bin/llvm-as" \
+	CC="$TCDIR/trb_clang/bin/clang" \
+	LD="$TCDIR/trb_clang/bin/ld.lld" \
+	AR="$TCDIR/trb_clang/bin/llvm-ar" \
+	NM="$TCDIR/trb_clang/bin/llvm-nm" \
+	STRIP="$TCDIR/trb_clang/bin/llvm-strip" \
+	OBJCOPY="$TCDIR/trb_clang/bin/llvm-objcopy" \
+	OBJDUMP="$TCDIR/trb_clang/bin/llvm-objdump" \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
-	CROSS_COMPILE="$KERNELDIR/trb_clang/bin/clang" \
-	CROSS_COMPILE_COMPAT="$KERNELDIR/trb_clang/bin/clang" \
-	CROSS_COMPILE_ARM32="$KERNELDIR/trb_clang/bin/clang"
+	CROSS_COMPILE="$TCDIR/trb_clang/bin/clang" \
+	CROSS_COMPILE_COMPAT="$TCDIR/trb_clang/bin/clang" \
+	CROSS_COMPILE_ARM32="$TCDIR/trb_clang/bin/clang"
 
 echo -e "$blue**** Kernel Compilation Completed ****"
 echo -e "$cyan**** Verify Image.gz-dtb ****"
