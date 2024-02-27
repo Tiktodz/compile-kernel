@@ -106,7 +106,7 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 # Push kernel to channel
 function push() {
     cd AnyKernel
-    ZIP=$(echo *.zip)
+    ZIP=$(echo *)
     curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
     java -jar zipsigner-3.0.jar "$ZIP".zip "$ZIP"-signed.zip
     ZIP="$ZIP-signed"
