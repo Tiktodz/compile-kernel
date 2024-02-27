@@ -36,6 +36,7 @@ ClangPath="${MainPath}/clang"
 
 # The name of the device for which the kernel is built
 MODEL="Asus Zenfone Max Pro M1"
+ARCH=arm64
 
 # Prepare
 KERNEL_ROOTDIR="${MainPath}"/kernel # IMPORTANT ! Fill with your kernel source root directory.
@@ -51,6 +52,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 export PATH="${ClangPath}"/bin:${PATH}
+ClangMoreStrings="AR=llvm-ar NM=llvm-nm AS=llvm-as STRIP=llvm-strip OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf HOSTAR=llvm-ar HOSTAS=llvm-as LD_LIBRARY_PATH=$ClangPath/lib LD=ld.lld HOSTLD=ld.lld"
  
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
@@ -75,26 +77,18 @@ compile(){
 cd ${KERNEL_ROOTDIR}
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
-export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
+#export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
 
 make -j$(nproc --all) O=out ARCH=arm64 asus/X00TD_defconfig
 make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
-    CC=${ClangPath}/bin/clang \
-    NM=${ClangPath}/bin/llvm-nm \
-    CXX=${ClangPath}/bin/clang++ \
-    AR=${ClangPath}/bin/llvm-ar \
-    STRIP=${ClangPath}/bin/llvm-strip \
-    OBJCOPY=${ClangPath}/bin/llvm-objcopy \
-    OBJDUMP=${ClangPath}/bin/llvm-objdump \
-    OBJSIZE=${ClangPath}/bin/llvm-size \
-    READELF=${ClangPath}/bin/llvm-readelf \
-    CLANG_TRIPLE=aarch64-linux-gnu- \
-    CROSS_COMPILE=${ClangPath}/bin/clang \
-    CROSS_COMPILE_ARM32=${ClangPath}/bin/clang \
-    CROSS_COMPILE_COMPAT=${ClangPath}/bin/clang \
-    HOSTAR=${ClangPath}/bin/llvm-ar \
-    HOSTCC=${ClangPath}/bin/clang \
-    HOSTCXX=${ClangPath}/bin/clang++
+		ARCH=$ARCH \
+		SUBARCH=$ARCH \
+		PATH=$ClangPath/bin:${PATH} \
+		CC=clang \
+		CROSS_COMPILE=$for64- \
+		CROSS_COMPILE_ARM32=$for32- \
+		HOSTCC=clang \
+		HOSTCXX=clang++ ${ClangMoreStrings}
 
    if ! [ -a "$IMAGE" ]; then
 	finerr
