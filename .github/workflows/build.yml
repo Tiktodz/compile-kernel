@@ -2,29 +2,24 @@
 # Copyright (C) 2023 RyuujiX <saputradenny712@gmail.com>
 # Copyright (C) 2023-2024 Kneba <abenkenary3@gmail.com>
 #
-
 name: Compile kernel
-
 env:
    TOKEN: ${{ secrets.TOKEN }}
    USERNAME: ${{ secrets.USERNAME }}
    TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
    TG_TOKEN: ${{ secrets.TG_TOKEN }}
-
 on: [push]
-
 jobs:
   kernel-build:
     runs-on: ubuntu-latest
     container:
-      image: debian:bookworm-slim
+      image: panchajanya1999/archlinux:latest
     steps:
     - uses: actions/checkout@v4
     - name: Setup CI
       run: |
-         apt update -y && apt upgrade -y && apt install -y sudo
-         sudo apt install glibc-source bc bison ca-certificates clang curl flex gcc git libc6-dev libssl-dev llvm openssl pip python-is-python3 ssh wget zip zstd make gcc-arm-linux-gnueabi software-properties-common build-essential libarchive-tools gcc-aarch64-linux-gnu tzdata -y && sudo apt install build-essential -y && sudo apt install libssl-dev libffi-dev libncurses5 zlib1g zlib1g-dev libreadline-dev libbz2-dev libsqlite3-dev make gcc -y && sudo apt install pigz -y && sudo apt install python3 -y && sudo apt install cpio -y && sudo apt install default-jre lld -y
-         sudo rm -rf /etc/localtime && sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+        sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
+        sudo pacman -Sy --noconfirm git bc llvm lld inetutils python3 flex bison libc++ libxml2 python-pipx zip wget cpio jdk-openjdk tzdata
     - name: Setup and Build Kernel
       run: bash build.sh
 
