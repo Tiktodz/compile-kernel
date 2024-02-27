@@ -16,7 +16,7 @@ VERSION=4-19
 TG_SUPER=1
 BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 $KERNELDIR/kernel
 
 tg_post_build()
 {
@@ -36,15 +36,15 @@ tg_post_build()
 	fi
 }
 
-git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang -b 17 --single-branch trb_clang
+git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang -b 17 --single-branch $KERNELDIR/trb_clang
 
 echo -e "AnyKernel3 not found! Cloning..."
-git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel3
+git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b 419 $KERNELDIR/AnyKernel3
 
 ## Copy this script inside the kernel directory
-KERNEL=$KERNELDIR/kernel/
+KERNEL=$KERNELDIR/kernel
 KERNEL_DEFCONFIG=asus/X00TD_defconfig
-ANYKERNEL3_DIR=$KERNELDIR/AnyKernel3/
+ANYKERNEL3_DIR=$KERNELDIR/AnyKernel3
 TZ=Asia/Jakarta
 DATE=$(date '+%Y%m%d')
 FINAL_KERNEL_ZIP="$KERNELNAME-$VARIANT-$VERSION-$(date '+%Y%m%d-%H%M')"
