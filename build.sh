@@ -16,7 +16,14 @@ VERSION=4-19
 TG_SUPER=1
 BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 $KERNELDIR/kernel
+echo -e "$yellow kernel not found! Cloning..."
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
+
+echo -e "$yellow trb_clang not found! Cloning..."
+git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang -b 17 --single-branch trb_clang
+
+echo -e "$yellow AnyKernel3 not found! Cloning..."
+git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel3
 
 tg_post_build()
 {
@@ -35,11 +42,6 @@ tg_post_build()
 	    -F caption="$2"
 	fi
 }
-
-git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang -b 17 --single-branch $KERNELDIR/trb_clang
-
-echo -e "AnyKernel3 not found! Cloning..."
-git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b 419 $KERNELDIR/AnyKernel3
 
 ## Copy this script inside the kernel directory
 KERNEL=$KERNELDIR/kernel
@@ -69,6 +71,7 @@ nocol='\033[0m'
 # Java
 command -v java > /dev/null 2>&1
 
+cd $KERNEL
 mkdir -p out
 make O=out clean
 
@@ -80,18 +83,18 @@ make $KERNEL_DEFCONFIG O=out
 make -j$(nproc --all) O=out \
 	ARCH=arm64 \
 	SUBARCH=arm64 \
-	AS="$KERNEL/trb_clang/bin/llvm-as" \
-	CC="$KERNEL/trb_clang/bin/clang" \
-	LD="$KERNEL/trb_clang/bin/ld.lld" \
-	AR="$KERNEL/trb_clang/bin/llvm-ar" \
-	NM="$KERNEL/trb_clang/bin/llvm-nm" \
-	STRIP="$KERNEL/trb_clang/bin/llvm-strip" \
-	OBJCOPY="$KERNEL/trb_clang/bin/llvm-objcopy" \
-	OBJDUMP="$KERNEL/trb_clang/bin/llvm-objdump" \
+	AS="$KERNELDIR/trb_clang/bin/llvm-as" \
+	CC="$KERNELDIR/trb_clang/bin/clang" \
+	LD="$KERNELDIR/trb_clang/bin/ld.lld" \
+	AR="$KERNELDIR/trb_clang/bin/llvm-ar" \
+	NM="$KERNELDIR/trb_clang/bin/llvm-nm" \
+	STRIP="$KERNELDIR/trb_clang/bin/llvm-strip" \
+	OBJCOPY="$KERNELDIR/trb_clang/bin/llvm-objcopy" \
+	OBJDUMP="$KERNELDIR/trb_clang/bin/llvm-objdump" \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
-	CROSS_COMPILE="$KERNEL/trb_clang/bin/clang" \
-	CROSS_COMPILE_COMPAT="$KERNEL/trb_clang/bin/clang" \
-	CROSS_COMPILE_ARM32="$KERNEL/trb_clang/bin/clang"
+	CROSS_COMPILE="$KERNELDIR/trb_clang/bin/clang" \
+	CROSS_COMPILE_COMPAT="$KERNELDIR/trb_clang/bin/clang" \
+	CROSS_COMPILE_ARM32="$KERNELDIR/trb_clang/bin/clang"
 
 echo -e "$blue**** Kernel Compilation Completed ****"
 echo -e "$cyan**** Verify Image.gz-dtb ****"
