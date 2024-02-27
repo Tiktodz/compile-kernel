@@ -17,13 +17,14 @@ jobs:
   kernel-build:
     runs-on: ubuntu-latest
     container:
-      image: panchajanya1999/archlinux:latest
+      image: debian:bookworm-slim
     steps:
     - uses: actions/checkout@v4
     - name: Setup CI
       run: |
-        sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
-        sudo pacman -Sy --noconfirm git bc llvm lld inetutils python3 flex bison libc++ libxml2 python-pipx zip wget cpio jdk-openjdk tzdata
+         apt update -y && apt upgrade -y && apt install -y sudo
+         sudo apt install glibc-source bc bison ca-certificates curl flex gcc git libc6-dev libssl-dev openssl python-is-python3 wget zip zstd make gcc-arm-linux-gnueabi software-properties-common build-essential libarchive-tools gcc-aarch64-linux-gnu tzdata -y || exit 1
+         sudo rm -rf /etc/localtime && sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
     - name: Setup and Build Kernel
       run: bash build.sh
 
