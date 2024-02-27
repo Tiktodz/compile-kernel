@@ -16,6 +16,12 @@ VERSION=4-19
 TG_SUPER=1
 BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 
+blue='\033[0;34m'
+cyan='\033[0;36m'
+yellow='\033[0;33m'
+red='\033[0;31m'
+nocol='\033[0m'
+
 echo -e "$yellow kernel not found! Cloning..."
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
 
@@ -50,25 +56,19 @@ KERNEL_DEFCONFIG=asus/X00TD_defconfig
 ANYKERNEL3_DIR=$KERNELDIR/AnyKernel3
 TZ=Asia/Jakarta
 DATE=$(date '+%Y%m%d')
+BUILD_START=$(date +"%s")
 FINAL_KERNEL_ZIP="$KERNELNAME-$VARIANT-$VERSION-$(date '+%Y%m%d-%H%M')"
 KERVER=$(make kernelversion)
 export ARCH=arm64
 export SUBARCH=arm64
 export KBUILD_BUILD_USER="queen"
 export KBUILD_BUILD_HOST=$(source /etc/os-release)
-export KBUILD_COMPILER_STRING="$($KERNELDIR/trb_clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+export KBUILD_COMPILER_STRING="$($TCDIR/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 export LLVM=1
 export LLVM_IAS=1
 
 # Speed up build process
 MAKE="./makeparallel"
-
-BUILD_START=$(date +"%s")
-blue='\033[0;34m'
-cyan='\033[0;36m'
-yellow='\033[0;33m'
-red='\033[0;31m'
-nocol='\033[0m'
 
 # Java
 command -v java > /dev/null 2>&1
@@ -100,9 +100,9 @@ make -j$(nproc --all) O=out \
 	CROSS_COMPILE_ARM32="$TCDIR/bin/clang"
 
 echo -e "$blue**** Kernel Compilation Completed ****"
-echo -e "$cyan**** Verify Image.gz-dtb ****"
 
 if ! [ -f $KERNEL/out/arch/arm64/boot/Image.gz-dtb ];then
+echo -e "$cyan**** Verify Image.gz-dtb ****"
     echo -e "$red Compile Failed!!!$nocol"
     exit 1
 fi
@@ -141,6 +141,10 @@ echo -e "$cyan Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) 
 
 echo -e "$cyan**** Uploading your zip now ****"
 tg_post_build "$ZIP_FINAL.zip" "Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds"
+echo -e "$cyan***********************************************"
+echo -e "          HAPPY FLASHING KONTOL          "
+echo -e "$yellow***********************************************"
+
 compile
 zipping
 END=$(date +"%s")
