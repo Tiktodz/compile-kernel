@@ -70,14 +70,14 @@ nocol='\033[0m'
 command -v java > /dev/null 2>&1
 
 mkdir -p out
-#make O=out clean && make O=out mrproper
+rm -rf out/
 
 echo -e "**** Kernel defconfig is set to $KERNEL_DEFCONFIG ****"
 echo -e "$blue***********************************************"
 echo -e "          BUILDING KERNEL          "
 echo -e "$red***********************************************"
-make $KERNEL_DEFCONFIG O=out
-make -j$(nproc --all) O=out \
+make -j$(nproc --all) O=out ARCH=arm64 $KERNEL_DEFCONFIG
+make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 	ARCH=arm64 \
 	AS="$KERNEL/trb_clang/bin/llvm-as" \
 	CC="$KERNEL/trb_clang/bin/clang" \
