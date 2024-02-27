@@ -86,18 +86,18 @@ make $KERNEL_DEFCONFIG O=out
 make -j$(nproc --all) O=out \
 	ARCH=arm64 \
 	SUBARCH=arm64 \
-	AS="$TCDIR/trb_clang/bin/llvm-as" \
-	CC="$TCDIR/trb_clang/bin/clang" \
-	LD="$TCDIR/trb_clang/bin/ld.lld" \
-	AR="$TCDIR/trb_clang/bin/llvm-ar" \
-	NM="$TCDIR/trb_clang/bin/llvm-nm" \
-	STRIP="$TCDIR/trb_clang/bin/llvm-strip" \
-	OBJCOPY="$TCDIR/trb_clang/bin/llvm-objcopy" \
-	OBJDUMP="$TCDIR/trb_clang/bin/llvm-objdump" \
+	AS="$TCDIR/bin/llvm-as" \
+	CC="$TCDIR/bin/clang" \
+	LD="$TCDIR/bin/ld.lld" \
+	AR="$TCDIR/bin/llvm-ar" \
+	NM="$TCDIR/bin/llvm-nm" \
+	STRIP="$TCDIR/bin/llvm-strip" \
+	OBJCOPY="$TCDIR/bin/llvm-objcopy" \
+	OBJDUMP="$TCDIR/bin/llvm-objdump" \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
-	CROSS_COMPILE="$TCDIR/trb_clang/bin/clang" \
-	CROSS_COMPILE_COMPAT="$TCDIR/trb_clang/bin/clang" \
-	CROSS_COMPILE_ARM32="$TCDIR/trb_clang/bin/clang"
+	CROSS_COMPILE="$TCDIR/bin/clang" \
+	CROSS_COMPILE_COMPAT="$TCDIR/bin/clang" \
+	CROSS_COMPILE_ARM32="$TCDIR/bin/clang"
 
 echo -e "$blue**** Kernel Compilation Completed ****"
 echo -e "$cyan**** Verify Image.gz-dtb ****"
@@ -126,14 +126,14 @@ ZIP_FINAL="$FINAL_KERNEL_ZIP"
 
 echo -e "$red**** Done, here is your sha1 ****"
 
-cd ..
-
 sha1sum $FINAL_KERNEL_ZIP
 
 echo -e "$cyan*** Zip signature ***"
 curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
 java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
 ZIP_FINAL="$ZIP_FINAL-signed"
+
+cd ..
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
