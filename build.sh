@@ -42,7 +42,7 @@ echo -e "AnyKernel3 not found! Cloning..."
 git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b 419 AnyKernel3
 
 ## Copy this script inside the kernel directory
-KERNEL=$KERNEL/kernel/
+KERNEL=$KERNELDIR/kernel/
 KERNEL_DEFCONFIG=asus/X00TD_defconfig
 ANYKERNEL3_DIR=$KERNELDIR/AnyKernel3/
 TZ=Asia/Jakarta
@@ -70,15 +70,16 @@ nocol='\033[0m'
 command -v java > /dev/null 2>&1
 
 mkdir -p out
-rm -rf out/
+make O=out clean
 
 echo -e "**** Kernel defconfig is set to $KERNEL_DEFCONFIG ****"
 echo -e "$blue***********************************************"
 echo -e "          BUILDING KERNEL          "
 echo -e "$red***********************************************"
-make -j$(nproc --all) O=out ARCH=arm64 $KERNEL_DEFCONFIG
-make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
+make $KERNEL_DEFCONFIG O=out
+make -j$(nproc --all) O=out \
 	ARCH=arm64 \
+	SUBARCH=arm64 \
 	AS="$KERNEL/trb_clang/bin/llvm-as" \
 	CC="$KERNEL/trb_clang/bin/clang" \
 	LD="$KERNEL/trb_clang/bin/ld.lld" \
