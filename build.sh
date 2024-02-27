@@ -80,7 +80,7 @@ echo -e "$blue***********************************************"
 echo -e "          BUILDING KERNEL          "
 echo -e "$red***********************************************"
 make $KERNEL_DEFCONFIG O=out
-make -j$(nproc --all) O=out \
+make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1 \
 	ARCH=arm64 \
 	SUBARCH=arm64 \
 	AS="$KERNELDIR/trb_clang/bin/llvm-as" \
