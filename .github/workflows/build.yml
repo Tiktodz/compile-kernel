@@ -1,15 +1,14 @@
 #
-# Copyright (C) 2023 RyuujiX <saputradenny712@gmail.com>
-# Copyright (C) 2023 Kneba <abenkenary3@gmail.com>
+# Copyright (C) 2023-2024 Kneba <abenkenary3@gmail.com>
 #
 
-name: Kernel build
+name: Compile kernel
 
 env:
-      TOKEN: ${{ secrets.TOKEN }}
-      USERNAME: ${{ secrets.USERNAME }}
-      TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-      TG_TOKEN: ${{ secrets.TG_TOKEN }}
+   TOKEN: ${{ secrets.TOKEN }}
+   USERNAME: ${{ secrets.USERNAME }}
+   TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+   TG_TOKEN: ${{ secrets.TG_TOKEN }}
 
 on: [push]
 
@@ -17,15 +16,15 @@ jobs:
   kernel-build:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:jammy-20211029
+      image: debian:trixie-slim
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup CI
       run: |
-        cp -af sources.list /etc/apt/ &&  cp -af 99own /etc/apt/apt.conf.d/
-        apt-get autoremove -y && apt-get --purge remove -y && apt-get autoclean -y && apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
-        dpkg-reconfigure -a && dpkg --configure -a
-        ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
-        apt-get -y install -f cpio gcc llvm lld g++-multilib python2 clang git libxml2 python3-pip gcc llvm lld g++-multilib clang default-jre git automake lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng bc libstdc++6 libncurses5 wget python3 python3-pip gcc clang libssl-dev rsync flex git-lfs libz3-dev libz3-4 axel tar bc binutils-dev bison build-essential ca-certificates ccache clang cmake curl file flex git libelf-dev libssl-dev lld make ninja-build python3-dev texinfo u-boot-tools xz-utils zlib1g-dev && python3 -m pip install networkx && pip3 install --upgrade gupload
+         apt update -y && apt upgrade -y && apt install -y sudo
+         sudo apt install glibc-source bc bison ca-certificates curl flex gcc git libc6-dev libssl-dev openssl python-is-python3 ssh wget zip zstd make gcc-arm-linux-gnueabi software-properties-common build-essential libarchive-tools gcc-aarch64-linux-gnu tzdata -y && sudo apt install build-essential -y && sudo apt install libssl-dev libffi-dev libncurses5-dev zlib1g zlib1g-dev libreadline-dev libbz2-dev libsqlite3-dev make gcc -y && sudo apt install pigz -y && sudo apt install python3 -y && sudo apt install cpio -y && sudo apt install default-jre lld -y
+         sudo rm -rf /etc/localtime && sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
     - name: Setup and Build Kernel
-      run: bash build.sh
+      run: |
+        git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Kneba/kernel_asus_sdm660 -b stock kernel && cd kernel
+        bash build.sh
