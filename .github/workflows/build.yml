@@ -26,5 +26,5 @@ jobs:
          sudo rm -rf /etc/localtime && sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
     - name: Setup and Build Kernel
       run: |
-        git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 kernel && cd kernel
+        git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b tom/eas kernel && cd kernel
         bash build.sh
