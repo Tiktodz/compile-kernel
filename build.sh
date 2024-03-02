@@ -14,7 +14,7 @@ MainPath=$(pwd)
 # MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Clone Kernulnya Boys
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660-4.19 kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 kernel
 
 # Clone TeeRBeh Clang
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
@@ -40,22 +40,24 @@ MODEL="Asus Zenfone Max Pro M1"
 # Prepare
 KERNEL_ROOTDIR="${MainPath}"/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export TZ=Asia/Jakarta # Change with your local timezone.
-export LD="ld.lld"
+export LD=ld.lld
+export HOSTLD=ld.lld
 export KERNELNAME=TheOneMemory # Change with your localversion name or else.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE="${KERNEL_ROOTDIR}"/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
-#LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
-export KBUILD_COMPILER_STRING="$CLANG_VER"
+LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
+export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 export PATH="${ClangPath}"/bin:${PATH}
- 
+
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 export STICKER="https://api.telegram.org/bot$TG_TOKEN/sendSticker"
+MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
 
 tg_post_msg() {
   curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
@@ -69,6 +71,8 @@ tg_send_sticker() {
         -d sticker="$1" \
         -d chat_id="$TG_CHAT_ID"
 }
+
+MAKE="./makeparallel"
 
 # Compile
 compile(){
@@ -113,8 +117,7 @@ function push() {
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=Markdown" \
-        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | *${KBUILD_COMPILER_STRING}* MD5CHECK=$(md5sum "$ZIP" | cut -d' ' -f1)"
-           tg_send_sticker "CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
+        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | Compiler *${KBUILD_COMPILER_STRING}* | $MD5CHECK"
 }
 
 # Fin Error
@@ -124,7 +127,6 @@ function finerr() {
         -d "disable_web_page_preview=true" \
         -d "parse_mode=markdown" \
         -d text="I'm tired of compiling kernels,And I choose to give up...please give me motivation"
-           tg_send_sticker "CAACAgUAAxkBAAERkTtl1RQCf9jzTxxJ4DzpVwrPuOOG9QACXAADZ7RFFr72cNXFq8_jNAQ"
     exit 1
 }
 
@@ -135,6 +137,7 @@ function zipping() {
     cd ..
 }
 
+tg_post_sticker "$SID"
 tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
 compile
 zipping
