@@ -13,6 +13,11 @@ MainPath=$(pwd)
 # MainZipGCCaPath="${MainPath}/GCC64-zip"
 # MainZipGCCbPath="${MainPath}/GCC32-zip"
 
+KERNELNAME=TheOneMemory
+
+# The name of the Kernel, to name the ZIP
+ZIPNAME="$KERNELNAME-Kernel-4-19-KSU"
+
 # Clone Kernulnya Boys
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 kernel
 
@@ -53,11 +58,18 @@ START=$(date +"%s")
 # PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 export PATH="${ClangPath}"/bin:${PATH}
 
+# Java
+command -v java > /dev/null 2>&1
+
+# Check Kernel Version
+KERVER=$(make kernelversion)
+
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 export STICKER="https://api.telegram.org/bot$TG_TOKEN/sendSticker"
-MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
+MD5CHECK=$(md5sum "$ZIP_FINAL.zip" | cut -d' ' -f1)
+SID="CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
 
 tg_post_msg() {
   curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
@@ -110,14 +122,11 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
 # Push kernel to channel
 function push() {
     cd AnyKernel
-    ZIP=$(echo *.zip)
-    SID="CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
-    STICK="CAACAgUAAxkBAAERkTtl1RQCf9jzTxxJ4DzpVwrPuOOG9QACXAADZ7RFFr72cNXFq8_jNAQ"
-    curl -F document=@"$ZIP" "$BOT_BUILD_URL" \
+    curl -F document="@$ZIP_FINAL.zip" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
-        -F "parse_mode=Markdown" \
-        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | Compiler *${KBUILD_COMPILER_STRING}* | $MD5CHECK"
+        -F "parse_mode=html" \
+        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | Compiler *${KBUILD_COMPILER_STRING}* | MD5 checksum: $MD5CHECK"
 }
 
 # Fin Error
@@ -133,11 +142,21 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 "$KERNELNAME-Kernel-4-19-$DATE.zip" *
-    cd ..
+	zip -r9 $ZIPNAME-"$DATE" * -x .git README.md placeholder .gitignore zipsigner* *.zip
+ 
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME-$DATE"
+
+	msg "|| Signing Zip ||"
+	tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
+
+	curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
+	java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
+	ZIP_FINAL="$ZIP_FINAL-signed"
+	cd ..
 }
 
-tg_post_sticker "$SID"
+tg_send_sticker "$SID"
 tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
 compile
 zipping
