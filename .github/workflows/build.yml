@@ -19,7 +19,7 @@ jobs:
     - name: Setup CI
       run: |
         sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
-        sudo pacman -Sy --noconfirm git bc llvm lld inetutils python3 flex bison libc++ libxml2 python-pipx zip wget cpio jdk-openjdk tzdata
+        pacman -Syu --needed --noconfirm wget make base-devel xmlto llvm lld jdk-openjdk inetutils bc cpio graphviz imagemagick git python3 zip gzip tzdata curl
     - name: Setup and Build Kernel
       run: bash build.sh
 
