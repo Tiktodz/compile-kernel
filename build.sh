@@ -165,10 +165,10 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-	zip -r9 $ZIPNAME-$KERVER-"$DATE" * -x .git README.md placeholder LICENSE .gitignore zipsigner* *.zip
+	zip -r9 $ZIPNAME-"$DATE" * -x .git README.md placeholder LICENSE .gitignore zipsigner* *.zip
  
 	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME-$KERVER-$DATE"
+	ZIP_FINAL="$ZIPNAME-$DATE"
 
 	msg "|| Signing Zip ||"
 	tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
@@ -180,7 +180,7 @@ function zipping() {
 }
 
 tg_send_sticker "$SID"
-tg_post_msg "🔨 <b>Warning!!</b>%0AStart Building ${KERNELNAME} Kernel for 📴 ${MODEL}"
+tg_post_msg "🔨 <b>Warning!!</b>%0AStart Building ${KERNELNAME} Kernel ${KERVER}"
 compile
 zipping
 END=$(date +"%s")
