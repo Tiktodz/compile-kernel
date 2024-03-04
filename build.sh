@@ -3,6 +3,21 @@
 # Copyright (C) 2022 <abenkenary3@gmail.com>
 #
 
+#set -e
+
+msg() {
+    echo -e "\e[1;32m$*\e[0m"
+}
+
+err() {
+    echo -e "\e[1;41m$*\e[0m"
+}
+
+cdir() {
+	cd "$1" 2>/dev/null || \
+		err "The directory $1 doesn't exists !"
+}
+
 # Main
 MainPath=$(pwd)
 # MainClangPath="${MainPath}/clang"
@@ -17,9 +32,11 @@ KERNELNAME=TheOneMemory
 ZIPNAME="$KERNELNAME-Kernel-4-19-KSU"
 
 # Clone Kernulnya Boys
+msg "|| Cloning Kernel ||"
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 kernel
 
 # Clone TeeRBeh Clang
+msg "|| Cloning trb_clang ||"
 git clone --depth=1 https://gitlab.com/varunhardgamer/trb_clang.git -b 17 --single-branch clang
 
 # ClangPath=${MainClangZipPath}
@@ -60,13 +77,12 @@ export PATH="${ClangPath}"/bin:${PATH}
 command -v java > /dev/null 2>&1
 
 # Check Kernel Version
-KERVER=$(cd KERNEL_ROOTDIR; make kernelversion)
+KERVER=$(cd $KERNEL_ROOTDIR; make kernelversion)
 
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 export STICKER="https://api.telegram.org/bot$TG_TOKEN/sendSticker"
-MD5CHECK=$(md5sum "$ZIP_FINAL.zip" | cut -d' ' -f1)
 SID="CAACAgUAAxkBAAERkqll1aooPLOdy9vohfuAt0sIAW34PwACWgADZ7RFFph-0udETtQqNAQ"
 
 tg_post_msg() {
@@ -82,6 +98,14 @@ tg_send_sticker() {
         -d chat_id="$TG_CHAT_ID"
 }
 
+tg_post_build() {
+	    curl -F document=@"$1" "$BOT_BUILD_URL" \
+	    -F chat_id="$TG_CHAT_ID"  \
+	    -F "disable_web_page_preview=true" \
+	    -F "parse_mode=Markdown" \
+	    -F caption="$2"
+}
+
 MAKE="./makeparallel"
 
 # Compile
@@ -91,7 +115,7 @@ export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 export LD_LIBRARY_PATH="${ClangPath}/lib:${LD_LIBRARY_PATH}"
 
-make -j$(nproc --all) O=out ARCH=arm64 asus/X00TD_defconfig
+make ARCH=arm64 asus/X00TD_defconfig O=out 2>&1 | tee -a error.log
 make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     CC=${ClangPath}/bin/clang \
     NM=${ClangPath}/bin/llvm-nm \
@@ -106,7 +130,7 @@ make -j$(nproc --all) ARCH=arm64 SUBARCH=arm64 O=out \
     CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
     HOSTAR=${ClangPath}/bin/llvm-ar \
     HOSTCC=${ClangPath}/bin/clang \
-    HOSTCXX=${ClangPath}/bin/clang++
+    HOSTCXX=${ClangPath}/bin/clang++ 2>&1 | tee -a error.log
 
    if ! [ -a "$IMAGE" ]; then
 	finerr
@@ -124,7 +148,7 @@ function push() {
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=html" \
-        -F caption="Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | For *${MODEL}* | Compiler *${KBUILD_COMPILER_STRING}* | MD5 checksum: $MD5CHECK"
+        -F caption="✅ Compile took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | 💾 Compiler *${KBUILD_COMPILER_STRING}* | Ⓜ️ MD5 checksum: `md5sum "$ZIP_FINAL.zip" | cut -d' ' -f1`"
 }
 
 # Fin Error
@@ -134,6 +158,7 @@ function finerr() {
         -d "disable_web_page_preview=true" \
         -d "parse_mode=markdown" \
         -d text="I'm tired of compiling kernels,And I choose to give up...please give me motivation"
+    tg_post_build "error.log" "Compile Error!!"
     exit 1
 }
 
@@ -155,7 +180,7 @@ function zipping() {
 }
 
 tg_send_sticker "$SID"
-tg_post_msg "<b>Warning!!</b>%0AStart Building ${KERNELNAME} for ${MODEL}"
+tg_post_msg "🔨 <b>Warning!!</b>%0AStart Building ${KERNELNAME} Kernel for 📴 ${MODEL}"
 compile
 zipping
 END=$(date +"%s")
