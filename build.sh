@@ -10,8 +10,6 @@ MainPath=$(pwd)
 # ClangPath="${MainClangZipPath}"
 # GCCaPath="${MainPath}/GCC64"
 # GCCbPath="${MainPath}/GCC32"
-# MainZipGCCaPath="${MainPath}/GCC64-zip"
-# MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 KERNELNAME=TheOneMemory
 
@@ -62,7 +60,7 @@ export PATH="${ClangPath}"/bin:${PATH}
 command -v java > /dev/null 2>&1
 
 # Check Kernel Version
-KERVER=$(make kernelversion)
+KERVER=$(cd KERNEL_ROOTDIR; make kernelversion)
 
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
@@ -142,10 +140,10 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-	zip -r9 $ZIPNAME-"$DATE" * -x .git README.md placeholder .gitignore zipsigner* *.zip
+	zip -r9 $ZIPNAME-$KERVER-"$DATE" * -x .git README.md placeholder LICENSE .gitignore zipsigner* *.zip
  
 	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME-$DATE"
+	ZIP_FINAL="$ZIPNAME-$KERVER-$DATE"
 
 	msg "|| Signing Zip ||"
 	tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
