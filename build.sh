@@ -37,7 +37,7 @@ CODENAME=Hayzel
 DEFCONFIG=X00TD_defconfig
 KERNELNAME=TheOneMemory
 VARIANT=HMP
-VERSION=CLO
+VERSION=EOL
 
 # Show manufacturer info
 MANUFACTURERINFO="ASUSTek Computer Inc."
@@ -110,7 +110,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel3 ||"
-   git clone https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
+   git clone https://github.com/Tiktodz/AnyKernel3 -b hmp AnyKernel
    cp $IMAGE AnyKernel
 }
 
