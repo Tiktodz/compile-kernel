@@ -74,6 +74,9 @@ START=$(date +"%s")
 # Java
 command -v java > /dev/null 2>&1
 
+# Check Kernel Version
+KERVER=$(cd $MainPath; make kernelversion)
+
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 
@@ -110,7 +113,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel3 ||"
-   git clone https://github.com/Tiktodz/AnyKernel3 -b hmp AnyKernel
+   git clone https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
    cp $IMAGE AnyKernel
 }
 
