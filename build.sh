@@ -43,8 +43,8 @@ git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_a
 # Clone StRess Clang
 ClangPath=${MainClangPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
+mkdir $ClangPath
 rm -rf $ClangPath/*
-mkdir -p $ClangPath
 msg "|| Cloning StRess clang 16 ||"
 #git clone --depth=1 https://gitlab.com/strongreasons/stress-clang.git $ClangPath
 msg "|| Cloning AOSP clang 18 ||"
@@ -54,8 +54,8 @@ tar -xf clang-r510928.tar.gz -C $ClangPath
 # Clone GCC
 rm -rf $GCCaPath/*
 rm -rf $GCCbPath/*
-mkdir -p $GCCaPath
-mkdir -p $GCCbPath
+mkdir $GCCaPath
+mkdir $GCCbPath
 msg "|| Cloning AOSP GCC 4.9.x ||"
 wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc64.tar.gz"
 tar -xf gcc64.tar.gz -C $GCCaPath
