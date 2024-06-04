@@ -40,13 +40,15 @@ MANUFACTURERINFO="ASUSTek Computer Inc."
 # Clone Kernel Source
 git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b 14-eas-wip kernel
 
-# Clone StRess Clang
-ClangPath=${MainClangPath}
+# Clone Clang
+ClangPath=${ClangPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
-mkdir $ClangPath
 rm -rf $ClangPath/*
-msg "|| Cloning StRess clang 16 ||"
+mkdir $ClangPath
+
+#msg "|| Cloning StRess clang 16 ||"
 #git clone --depth=1 https://gitlab.com/strongreasons/stress-clang.git $ClangPath
+
 msg "|| Cloning AOSP clang 18 ||"
 wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r510928.tar.gz -O "clang-r510928.tar.gz"
 tar -xf clang-r510928.tar.gz -C $ClangPath
@@ -56,7 +58,8 @@ rm -rf $GCCaPath/*
 rm -rf $GCCbPath/*
 mkdir $GCCaPath
 mkdir $GCCbPath
-msg "|| Cloning AOSP GCC 4.9.x ||"
+
+msg "|| Cloning AOSP GCC ||"
 wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc64.tar.gz"
 tar -xf gcc64.tar.gz -C $GCCaPath
 wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc32.tar.gz"
