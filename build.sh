@@ -2,7 +2,6 @@
 #
 # Copyright (C) 2023 Kneba <abenkenary3@gmail.com>
 #
-
 #
 # Function to show an informational message
 ##
