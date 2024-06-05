@@ -38,7 +38,7 @@ VARIANT=EAS
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b 14-eas-wip kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b 14-eas-wip kernel
 
 # Clone Clang
 ClangPath=${ClangPath}
@@ -67,13 +67,14 @@ tar -xf gcc32.tar.gz -C $GCCbPath
 
 # Prepared
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
-export KBUILD_BUILD_USER=Queen # Change with your own name or else.
+export KBUILD_BUILD_USER=queen # Change with your own name or else.
 export KBUILD_BUILD_HOST=UpsideDownCake # Change with your own host name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
 export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
-DATE=$(date +"%Y-%m-%d")
+DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
+DATE2=$(TZ=Asia/Jakarta date +"%Y%m%d")
 START=$(date +"%s")
 
 # Java
