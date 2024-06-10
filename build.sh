@@ -184,7 +184,7 @@ function zipping() {
     msg "|| Signing Zip ||"
     tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
   if command -v java > /dev/null 2>&1; then
-    curl -sLo zipsigner-3.0-dexed.jar https://github.com/krasCGQ/scripts/raw/fc13c81e8b28d783ddabf6361ac5879a8ac8ca1e/prebuilts/bin/zipsigner-3.0-dexed.jar
+    curl -sLo zipsigner-3.0-dexed.jar https://github.com/krasCGQ/scripts/blob/master/prebuilts/bin/zipsigner-3.0-dexed.jar
     java -jar zipsigner-3.0-dexed.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
     ZIP_FINAL="$ZIP_FINAL-signed"
   fi
