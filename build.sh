@@ -28,7 +28,7 @@ GCCaPath="${MainPath}/GCC64"
 GCCbPath="${MainPath}/GCC32"
 
 # Identity
-VERSION=14
+VERSION=UDC
 KERNELNAME=TheOneMemory
 CODENAME=EOL
 VARIANT=EAS
@@ -75,9 +75,6 @@ export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 DATE2=$(TZ=Asia/Jakarta date +"%Y%m%d")
 START=$(date +"%s")
-
-# Java
-command -v java > /dev/null 2>&1
 
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
@@ -155,7 +152,7 @@ function push() {
         -<code>$DATE</code>
 
         <b>🐧 Linux Version: </b>
-        -<code>4.4.302</code>
+        -<code>4.4.302 | $CODENAME</code>
 
          <b>💿 Compiler: </b>
         -<code>$KBUILD_COMPILER_STRING</code>
@@ -166,7 +163,7 @@ function push() {
         <b>🆑 Changelog: </b>
         - <code>$COMMIT_HEAD</code>
         <b></b>
-        #$KERNELNAME #$CODENAME #$VARIANT"
+        #$KERNELNAME #$CODENAME #$VARIANT #$VERSION"
 }
 # Find Error
 function finerr() {
@@ -180,16 +177,17 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 [UDC]$KERNELNAME-$CODENAME-$VARIANT-"$DATE" . -x ".git*" -x "README.md" -x "zipsigner*" "*.zip"
+    zip -r9 [$VERSION]$KERNELNAME-$CODENAME-$VARIANT-"$DATE" . -x ".git*" -x "README.md" -x "./*placeholder" "*.zip"
 
-    ZIP_FINAL="[UDC]$KERNELNAME-$CODENAME-$VARIANT-$DATE"
+    ZIP_FINAL="[$VERSION]$KERNELNAME-$CODENAME-$VARIANT-$DATE"
 
     msg "|| Signing Zip ||"
     tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
-
-    curl -sLo zipsigner-4.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel3/master/zipsigner-4.0.jar
-    java -jar zipsigner-4.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
+  if command -v java > /dev/null 2>&1; then
+    curl -sLo zipsigner-3.0-dexed.jar https://github.com/krasCGQ/scripts/raw/fc13c81e8b28d783ddabf6361ac5879a8ac8ca1e/prebuilts/bin/zipsigner-3.0-dexed.jar
+    java -jar zipsigner-3.0-dexed.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
     ZIP_FINAL="$ZIP_FINAL-signed"
+  fi
     cd ..
 }
 compile
