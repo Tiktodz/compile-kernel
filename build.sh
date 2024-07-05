@@ -44,7 +44,7 @@ MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
 msg "|| Cloning Kernel Source ||"
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/sotodrom/kernel_asus_sdm636 -b tom/eas kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/kernel_asus_sdm636 -b tom/eas kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
